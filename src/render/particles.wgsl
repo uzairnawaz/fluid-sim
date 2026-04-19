@@ -35,5 +35,5 @@ fn vs_main(
 
 @fragment
 fn fs_main() -> @location(0) vec4f {
-  return vec4f(1.0, 1.0, 1.0, 1.0);
+  return vec4f(0.3, 0.3, 1.0, 1.0);
 }
