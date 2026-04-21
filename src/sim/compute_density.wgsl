@@ -16,10 +16,10 @@ fn main(@builtin(global_invocation_id) id: vec3<u32>) {
     let h2 = h * h;
     let coef = 315.0 / (64.0 * PI * pow(h, 9.0));
 
-    let pos_i = particles[i].pos;
+    let pos_i = particles[i].predPos;
     var rho: f32 = 0.0;
     for (var j: u32 = 0u; j < n; j = j + 1u) {
-        let r = pos_i - particles[j].pos;
+        let r = pos_i - particles[j].predPos;
         let r2 = dot(r, r);
         if (r2 < h2) {
             let x = h2 - r2;
