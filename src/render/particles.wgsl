@@ -10,6 +10,7 @@ struct CameraU {
 
 struct VsOut {
   @builtin(position) pos: vec4f,
+  @location(0) density: f32,
 };
 
 @vertex
@@ -30,10 +31,17 @@ fn vs_main(
 
   var out: VsOut;
   out.pos = cam.proj * vec4f(viewBillboard, 1.0);
+  out.density = particles[ii].density;
   return out;
 }
 
 @fragment
-fn fs_main() -> @location(0) vec4f {
-  return vec4f(0.3, 0.3, 1.0, 1.0);
+fn fs_main(in: VsOut) -> @location(0) vec4f {
+  // Color by density. Range tuned for default h = 0.1, unit mass:
+  //   ~1566   = Poly6 self-contribution (isolated particle)  → blue
+  //   ~10000+ = dense neighborhood                           → red
+  let t = smoothstep(2000.0, 10000.0, in.density);
+  let blue = vec3f(0.1, 0.3, 1.0);
+  let red  = vec3f(1.0, 0.15, 0.1);
+  return vec4f(mix(blue, red, t), 1.0);
 }
