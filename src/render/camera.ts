@@ -13,6 +13,8 @@ export class Camera {
 
   readonly view: Mat4 = mat4.identity();
   readonly proj: Mat4 = mat4.identity();
+  readonly invView: Mat4 = mat4.identity();
+  readonly invProj: Mat4 = mat4.identity();
 
   constructor() {
     this.recompute();
@@ -45,5 +47,7 @@ export class Camera {
     );
     mat4.lookAt(eye, this.target, vec3.create(0, 1, 0), this.view);
     mat4.perspective(this.fovY, this.aspect, this.near, this.far, this.proj);
+    mat4.inverse(this.view, this.invView);
+    mat4.inverse(this.proj, this.invProj);
   }
 }

@@ -42,6 +42,7 @@ async function main() {
     canvas.width = w;
     canvas.height = h;
     camera.resize(w, h);
+    renderer.resize(w, h);
   }
   window.addEventListener("resize", resize);
   resize();

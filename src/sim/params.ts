@@ -8,7 +8,7 @@ export interface SimParams {
 
 export function defaultParams(): SimParams {
     return {
-        particleCount: 1 << 13,
+        particleCount: 1 << 14,
         h: 0.1,
         restDensity: 50000,
         dt: 1 / 120,
