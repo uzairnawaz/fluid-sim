@@ -13,7 +13,7 @@ struct BilateralParams {
 @group(0) @binding(0) var srcTex: texture_2d<f32>;
 @group(0) @binding(1) var<uniform> params: BilateralParams;
 
-const KERNEL_RADIUS: i32 = 16;  // 33-tap kernel (−16..+16)
+const KERNEL_RADIUS: i32 = 16;
 const FAR_EPS: f32 = 0.9999;    // anything ≥ this is "background, no fluid"
 
 @fragment

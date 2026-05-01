@@ -28,6 +28,9 @@ export class Simulation {
     readonly params: SimParams;
     readonly particleBuffer: GPUBuffer;
     readonly paramsBuffer: GPUBuffer;
+    // Mouse-interaction uniform: vec3 center + f32 strength (16 B). Updated
+    // every frame from main.ts via setInteraction().
+    readonly interactionBuffer: GPUBuffer;
 
     // Grid buffers. cellCount is repurposed across the grid build (scratch
     // counter during scatter, final per-cell populations afterwards).
@@ -73,6 +76,18 @@ export class Simulation {
         paramsData[3] = params.dt;
         paramsData[4] = params.solverIters;
         this.device.queue.writeBuffer(this.paramsBuffer, 0, paramsData);
+
+        this.interactionBuffer = device.createBuffer({
+            label: "interaction",
+            size: 16,
+            usage: GPUBufferUsage.UNIFORM | GPUBufferUsage.COPY_DST,
+        });
+        // Strength = 0 by default → predict shader skips the repel branch.
+        this.device.queue.writeBuffer(
+            this.interactionBuffer,
+            0,
+            new Float32Array([0, 0, 0, 0]),
+        );
 
         this.cellCountBuffer = device.createBuffer({
             label: "cell_count",
@@ -147,6 +162,20 @@ export class Simulation {
         );
     }
 
+    /** Push the next frame's mouse-interaction state into the GPU. Pass
+     *  strength = 0 (or call clearInteraction()) to disable the repel. */
+    setInteraction(cx: number, cy: number, cz: number, strength: number): void {
+        this.device.queue.writeBuffer(
+            this.interactionBuffer,
+            0,
+            new Float32Array([cx, cy, cz, strength]),
+        );
+    }
+
+    clearInteraction(): void {
+        this.setInteraction(0, 0, 0, 0);
+    }
+
     initializeParticles(particle_buf: Float32Array): void {
         // Dam-break initial condition: pack all particles into a slab on the
         // −x end of the box (x ∈ [−0.5, −0.1], y/z full range). Under gravity
@@ -195,7 +224,11 @@ export class Simulation {
         // Sim-time bind groups.
         const predictBG = this.device.createBindGroup({
             layout: this.predictPipeline.getBindGroupLayout(0),
-            entries: [particles, paramsUBO],
+            entries: [
+                particles,
+                paramsUBO,
+                { binding: 2, resource: { buffer: this.interactionBuffer } },
+            ],
         });
         const gridQueryEntries = [
             particles,

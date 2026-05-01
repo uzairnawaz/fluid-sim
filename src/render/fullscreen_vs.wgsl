@@ -1,6 +1,5 @@
 // Full-screen triangle. One oversized triangle covers NDC [-1,1]² — no
-// diagonal seam, no duplicate-vertex cost. Prepended to every fullscreen
-// fragment shader in Phase 7.
+// diagonal seam, no duplicate-vertex cost.
 @vertex
 fn vs_main(@builtin(vertex_index) vi: u32) -> @builtin(position) vec4f {
     let p = array<vec2f, 3>(

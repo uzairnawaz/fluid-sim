@@ -1,4 +1,4 @@
-// Step 7.4: reconstruct view-space surface normals from the smoothed depth
+// Reconstruct view-space surface normals from the smoothed depth
 // buffer. We unproject five texels (center + 4 neighbors) back to view-space
 // positions, then take the cross product of two tangent vectors.
 //

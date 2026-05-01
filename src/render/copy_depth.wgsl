@@ -1,6 +1,5 @@
 // Copies depth32float → r32float so later passes can sample depth as a regular
-// texture_2d<f32> instead of texture_depth_2d (which the bilateral shader,
-// reused for both H and V passes, can't polymorphically declare).
+// texture_2d<f32> instead of texture_depth_2d (which the bilateral shader
 @group(0) @binding(0) var srcDepth: texture_depth_2d;
 
 @fragment
